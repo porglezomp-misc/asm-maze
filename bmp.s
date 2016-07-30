@@ -22,6 +22,11 @@ OFFSET	SIZE	FIELD				VALUE
 0x2E	4	NUM COLORS IN IMAGE, OR 0	(0)
 0x32	4	NUM IMPORTANT COLORS, OR 0	(0)
 --------------------------------------------------------
+
+Args:
+  - r0: width
+  - r1: height
+Usage: Call this and then print the body seperately.
 */
 bmp_write_header:
 	sub	sp, #54
@@ -51,7 +56,7 @@ bmp_write_header:
 	str	r0, [sp, #0x12]
 	str	r1, [sp, #0x16]
 
-	/* Data size */
+	/* Data size, multiply by 3 */
 	add	r0, r0, LSL #1
 	/* Round up to the nearest multiple of 4 */
 	add	r0, #3
@@ -61,6 +66,7 @@ bmp_write_header:
 	add	r0, #54
 	str	r0, [sp, #0x02]
 
+	/* Print the header to stdout */
 	mov	r0, #1
 	mov	r1, sp
 	mov	r2, #54
