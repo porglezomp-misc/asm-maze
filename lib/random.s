@@ -1,5 +1,3 @@
-.globl random_word
-.globl random_set_seed
 .text
 
 /*
@@ -10,6 +8,9 @@ It has a maximal period of 2^128 - 1. The state values
 must be initialized so that they are not all zero, or
 else you won't have good entropy.
 */
+	.arm
+	.align
+	.globl random_word
 random_word:
 	push	{r4}
 	ldr	r4, =xorshift_state
@@ -30,6 +31,9 @@ This routine allows you to set the state vector of the
 random generator. The state vector will be set to the
 values contained in r0, r1, r2, and r3.
 */
+	.arm
+	.align
+	.globl random_set_seed
 random_set_seed:
 	ldr	r12, =xorshift_state
 	stm	r12, {r0, r1, r2, r3}

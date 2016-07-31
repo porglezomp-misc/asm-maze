@@ -1,10 +1,9 @@
 	.text
+
+
+	.arm
+	.align
 	.globl print_nibble
-	.globl print_byte
-	.globl print_half
-	.globl print_word
-	.globl newline
-	
 print_nibble:
 	mov r3, r7 		// We can save with registers!
 				// Calling convention requires saving r4+
@@ -20,10 +19,14 @@ print_nibble:
 	mov r7, r3
 	bx  lr
 
+
+	.arm
+	.align
+	.globl print_byte
 print_byte:
 	push {r4, lr}
 	mov r4, r0
-	
+
 	lsr r0, r4, #4		// Byte 2
 	bl print_nibble
 	mov r0, r4
@@ -31,6 +34,10 @@ print_byte:
 	
 	pop {r4, pc}
 
+
+	.arm
+	.align
+	.globl print_half
 print_half:	
 	push {r4, lr}
 	mov r4, r0
@@ -45,7 +52,11 @@ print_half:
 	bl print_nibble
 
 	pop {r4, pc}
-	
+
+
+	.arm
+	.align
+	.globl print_word
 print_word:
 	push {r4, lr}
 	mov r4, r0
@@ -66,9 +77,13 @@ print_word:
 	bl print_nibble
 	mov r0, r4
 	bl print_nibble
-	
+
 	pop {r4, pc}
 	
+
+	.arm
+	.align
+	.globl newline
 newline:
 	mov r3, r7
 	
@@ -80,6 +95,7 @@ newline:
 
 	mov r7, r3
 	bx  lr
+
 
 	.data
 hexdigits:

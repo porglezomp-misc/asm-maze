@@ -1,4 +1,4 @@
-.globl bmp_write_header
+.text
 
 /*
 ==[ BMP HEADER LAYOUT ]=================================
@@ -28,6 +28,9 @@ Args:
   - r1: height
 Usage: Call this and then print the body seperately.
 */
+	.arm
+	.align
+	.globl bmp_write_header
 bmp_write_header:
 	sub	sp, #54
 

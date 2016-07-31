@@ -1,4 +1,3 @@
-.globl draw_line
 .text
 
 .macro swapop op a b tmp
@@ -12,6 +11,9 @@ Draws a line between (r0,r1) and (r2,r3), using a screen
 specified at the top of the stack, with width, height,
 and pointer.
 */
+        .arm
+        .align
+        .globl draw_line
 draw_line:
 	push	{r4, r5, r6, r7, r8, r9, r10, r11}
 

@@ -1,9 +1,3 @@
-.globl map_framebuffer
-.globl unmap_framebuffer
-.globl set_resolution
-.globl clear_color
-.globl graphics_mode
-.globl text_mode
 .text
 
 FIX_SIZE = 0x44
@@ -37,6 +31,9 @@ KD_TEXT = 0x0
 /*
 ==[ FRAMEBUFFER ]======================================
 */
+	.arm
+	.align
+	.globl map_framebuffer
 map_framebuffer:
 	push	{r4, r5, r6, r7, r8, r9, r10}
 	sub	sp, #FIX_SIZE + VAR_SIZE
@@ -118,6 +115,9 @@ This routine closes the resources associated with the
 framebuffer. It takes the pointer to the mmap'd buffer
 in r0 and the length of the buffer in r1.
 */
+	.arm
+	.align
+	.globl unmap_framebuffer
 unmap_framebuffer:
 	mov	r2, r7
 	// munmap(r0, r1)
@@ -133,6 +133,9 @@ and height specified in r0 and r1, and returns the actual
 resolution that the display gets set to. If any operation
 fails, it returns the resolution -1, -1.
 */
+	.arm
+	.align
+	.globl set_resolution
 set_resolution:
 	sub	sp, #VAR_SIZE
 	push	{r4, r5, r7}
@@ -202,6 +205,9 @@ in r0, using the same stack arguments as draw_line: the
 width, height, and pointer should be passed as stack
 arguments.
 */
+	.arm
+	.align
+	.globl clear_color
 clear_color:
 	ldr	r1, [sp, #4 * 2]
 	ldr	r2, [sp, #4 * 1]
@@ -221,6 +227,9 @@ loop:
 /*
 This routine sets the display to graphics mode.
 */
+	.arm
+	.align
+	.globl graphics_mode
 graphics_mode:
 	push	{r4, r7}
 	// fd = open("/dev/tty", O_RDWR)
@@ -251,6 +260,9 @@ graphics_mode_done:
 /*
 This routine sets the display to text mode.
 */
+	.arm
+	.align
+	.globl text_mode
 text_mode:
 	push	{r4, r7}
 	// fd = open("/dev/tty", O_RDWR)
