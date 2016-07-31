@@ -6,7 +6,7 @@ C=gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 all: target/test-fb target/test-image target/fb-example \
 	target/values target/shuffle target/test-line \
 	target/absdiff target/sleep target/wiggler \
-	target/textmode target/graphicsmode
+	target/textmode target/graphicsmode target/kbd-experiment
 
 target/wiggler: src/wiggler.s obj/framebuffer.o obj/line.o
 	${ASM}
@@ -28,6 +28,9 @@ target/test-image: src/test-bmp.s obj/random.o obj/bmp.o
 
 target/absdiff: experiment/absdiff.s obj/hex.o
 	${ASM}
+
+target/kbd-experiment: experiment/keyboard.c
+	${C}
 
 target/graphicsmode: experiment/graphicsmode.c
 	${C}
