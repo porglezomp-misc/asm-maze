@@ -1,7 +1,11 @@
 DUMMY:=$(shell mkdir -p obj target)
 
 all: target/test-fb target/test-image target/fb-example \
-	target/values target/shuffle
+	target/values target/shuffle target/test-line \
+	target/absdiff
+
+target/test-line: src/test-line.s obj/line.o obj/framebuffer.o obj/random.o
+	gcc -nostdlib -o $@ $^ -g
 
 target/shuffle: src/shuffle.s obj/framebuffer.o obj/hex.o
 	gcc -nostdlib -o $@ $^ -g
@@ -17,6 +21,9 @@ target/fb-example: experiment/fb-example.c
 
 target/values: experiment/values.c
 	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
+
+target/absdiff: experiment/absdiff.s obj/hex.o
+	gcc -nostdlib -o $@ $^ -g
 
 obj/%.o: lib/%.s
 	gcc -nostdlib -c -o $@ $< -g
