@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 199309L
 
 #include <linux/fb.h>
+#include <linux/input.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -12,6 +13,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <time.h>
+#include <poll.h>
 
 #define print_sizeof(X) printf("sizeof(" #X "): 0x%x\n", sizeof(X))
 #define print_offset(X, M) printf("offsetof(" #X ", " #M "): 0x%x\n", offsetof(X, M))
@@ -33,6 +35,7 @@ int main() {
     puts("");
 
     print_int(O_RDWR);
+    print_int(O_RDONLY);
     puts("");
 
     print_int(PROT_READ);
@@ -40,14 +43,16 @@ int main() {
     print_int(MAP_SHARED);
     puts("");
 
-    print_int(SYS_ioctl);
+    print_int(SYS_read);
     print_int(SYS_open);
     print_int(SYS_close);
+    print_int(SYS_ioctl);
     print_int(SYS_mmap2);
     print_int(SYS_munmap);
     print_int(SYS_nanosleep);
     print_int(SYS_clock_gettime);
     print_int(SYS_clock_nanosleep);
+    print_int(SYS_poll);
     puts("");
 
     print_sizeof(struct timespec);
@@ -60,6 +65,17 @@ int main() {
     print_int(KDSETMODE);
     print_int(KD_GRAPHICS);
     print_int(KD_TEXT);
+    puts("");
+
+    print_sizeof(struct pollfd);
+    print_offset(struct pollfd, fd);
+    print_offset(struct pollfd, events);
+    print_offset(struct pollfd, revents);
+    print_sizeof(struct input_event);
+    print_offset(struct input_event, type);
+    print_offset(struct input_event, value);
+    print_offset(struct input_event, code);
+    puts("");
 
     return 0;
 }
