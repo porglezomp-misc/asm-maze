@@ -64,10 +64,23 @@ inctime:
 draw:
 	mov	r0, #0
 	bl	clear_color
-	line	r4, #220, r4, #130
-	line	r4, r4, #220, #130
-	line	#220, r4, r4, #130
-	line	#220, #130, r4, r4
+	// Pingpong from top and bottom of screen
+	and	r5, r4, #0xF
+	tst	r4, #0x10
+	rsbeq	r5, r5, #0xF
+	rsb	r6, r5, #230
+	add	r5, #10
+
+	line	#64, r5, #16, r6
+	line	#64, r5, #128, r6
+	line	#32, r5, #128, r6
+	line	#32, r5, #48, r6
+	line	#128, r5, #48, r6
+	line	#128, r5, #256, r6
+	line	#176, r5, #256, r6
+	line	#368, r5, #256, r6
+	line	#176, r5, #368, r6
+	line	#368, r5, #128, r6
 
 sleep:
 	// Sleep until the next frame
