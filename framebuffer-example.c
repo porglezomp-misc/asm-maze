@@ -30,16 +30,16 @@ int main() {
     // if (ioctl(fbfd, FBIOGET_FSCREENINFO, &fix_info) < 0) {
     if (syscall(SYS_ioctl, fbfd, FBIOGET_FSCREENINFO, &fix_info) < 0) {
         printf("Failed to get fixed screen info: %s\n", strerror(errno));
-        status = 1;
-        goto cleanup;
+        syscall(SYS_close, fbfd);
+        return 1;
     }
 
     struct fb_var_screeninfo var_info;
     //if (ioctl(fbfd, FBIOGET_VSCREENINFO, &var_info) < 0) {
     if (syscall(SYS_ioctl, fbfd, FBIOGET_VSCREENINFO, &var_info) < 0) {
         printf("Failed to get variable screen info: %s\n", strerror(errno));
-        status = 1;
-        goto cleanup;
+        syscall(SYS_close, fbfd);
+        return 1;
     }
 
     int length = fix_info.smem_len;
@@ -50,10 +50,11 @@ int main() {
     void *framebuffer = (void*)syscall(
         // mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
         SYS_mmap2, 0, length, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
+    // close(fbfd);
+    syscall(SYS_close, fbfd);
     if (framebuffer == NULL) {
         printf("mmap failed.\n");
-        status = 1;
-        goto cleanup;
+        return 1;
     }
 
     short *p = framebuffer;
@@ -66,10 +67,7 @@ int main() {
         }
     }
 
-cleanup:
     // munmap(framebuffer, length);
     syscall(SYS_munmap, framebuffer, length);
-    // close(fbfd);
-    syscall(SYS_close, fbfd);
     return status;
 }
