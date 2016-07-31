@@ -7,7 +7,10 @@ all: target/test-fb target/test-image target/fb-example \
 	target/values target/shuffle target/test-line \
 	target/absdiff target/sleep target/wiggler \
 	target/textmode target/graphicsmode \
-	target/kbd-experiment target/kbdemo
+	target/kbd-experiment target/kbdemo target/crosshair
+
+target/crosshair: src/crosshair.s obj/keyboard.o obj/framebuffer.o obj/line.o
+	${ASM}
 
 target/kbdemo: src/kbdemo.s obj/keyboard.o
 	${ASM}
