@@ -46,28 +46,27 @@ map_framebuffer:
 	// ioctl(fb_fd, FBIOGET_FSCREENINFO, &fix_info)
 	// mov	r0, r6 // redundant
 	ldr	r1, =FBIOGET_FSCREENINFO
-	// @Todo: Fix the offsets
-	sub	r2, sp, #FIX_SIZE + VAR_SIZE
+	mov	r2, sp
 	mov	r7, #SYS_ioctl
 	svc	#0
 	cmp	r0, #0
 	blt	cleanup
 
 	// Extract the memory size from the struct
-	ldr	r8, [sp, #-FIX_SIZE - VAR_SIZE + MEMLEN_OFF]
+	ldr	r8, [sp, #MEMLEN_OFF]
 
 	// ioctl(fb_fd, FBIOGET_VSCREENINFO, &var_info)
 	mov	r0, r6
 	mov	r1, #FBIOGET_VSCREENINFO
-	sub	r2, sp, #VAR_SIZE
+	add	r2, sp, #FIX_SIZE
 	mov	r7, #SYS_ioctl
 	svc	#0
 	cmp	r0, #0
 	blt	cleanup
 
 	// Extract the width and height of the screen
-	ldr	r9, [sp, #-VAR_SIZE + XRES_OFF]
-	ldr	r10, [sp, #-VAR_SIZE + YRES_OFF]
+	ldr	r9, [sp, #FIX_SIZE + XRES_OFF]
+	ldr	r10, [sp, #FIX_SIZE + YRES_OFF]
 
         // mmap(0, length, PROT_READ | PROT_WRITE,
 	// 	MAP_SHARED, fbfd, 0)
