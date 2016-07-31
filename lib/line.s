@@ -59,13 +59,20 @@ hloop:
 
 	add	y1, dy
 	cmp	y1, dx
-	subgt	y1, dx
-	addgt	y0, r9
-
+        bgt     hyoff
+hinc:
 	add	x0, #1
 	cmp	x0, x1
 	blt	hloop
 	b end
+
+hyoff:
+	sub	y1, dx
+	add	y0, r9
+	mla	r11, y0, w, x0
+	add	r11, base, r11, LSL #1
+	strh	r10, [r11]
+        b       hinc
 
 vert:
 	// We want to work from top to bottom
@@ -88,12 +95,20 @@ vloop:
 
 	add	x1, dx
 	cmp	x1, dy
-	subgt	x1, dy
-	addgt	x0, r9
-
+        bgt     vxoff
+vinc:
 	add	y0, #1
 	cmp	y0, y1
 	blt	vloop
+        b end
+
+vxoff:
+	sub	x1, dy
+	add	x0, r9
+	mla	r11, y0, w, x0
+	add	r11, base, r11, LSL #1
+	strh	r10, [r11]
+        b       vinc
 
 end:
 	pop	{r4, r5, r6, r7, r8, r9, r10, r11}
