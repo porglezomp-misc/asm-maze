@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <linux/fb.h>
 
 #include <sys/types.h>
@@ -8,6 +10,7 @@
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <time.h>
 
 #define print_sizeof(X) printf("sizeof(" #X "): 0x%x\n", sizeof(X))
 #define print_offset(X, M) printf("offsetof(" #X ", " #M "): 0x%x\n", offsetof(X, M))
@@ -41,5 +44,17 @@ int main() {
     print_int(SYS_close);
     print_int(SYS_mmap2);
     print_int(SYS_munmap);
+    print_int(SYS_nanosleep);
+    print_int(SYS_clock_gettime);
+    print_int(SYS_clock_nanosleep);
+    puts("");
+
+    print_sizeof(struct timespec);
+    print_offset(struct timespec, tv_sec);
+    print_offset(struct timespec, tv_nsec);
+    print_int(CLOCK_MONOTONIC);
+    print_int(TIMER_ABSTIME);
+    puts("");
+
     return 0;
 }

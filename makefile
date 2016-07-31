@@ -2,7 +2,10 @@ DUMMY:=$(shell mkdir -p obj target)
 
 all: target/test-fb target/test-image target/fb-example \
 	target/values target/shuffle target/test-line \
-	target/absdiff
+	target/absdiff target/sleep
+
+target/sleep: src/sleep.s
+	gcc -nostdlib -o $@ $^ -g
 
 target/test-line: src/test-line.s obj/line.o obj/framebuffer.o obj/random.o
 	gcc -nostdlib -o $@ $^ -g
