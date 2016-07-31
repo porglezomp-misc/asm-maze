@@ -40,7 +40,6 @@ loop:
 	add	y, #2
 	cmp	y, h
 	blt	row
-	
 
 	mov	r0, base
 	mov	r1, len
