@@ -7,9 +7,13 @@ all: target/test-fb target/test-image target/fb-example \
 	target/values target/shuffle target/test-line \
 	target/absdiff target/sleep target/wiggler \
 	target/textmode target/graphicsmode \
-	target/kbd-experiment target/kbdemo target/crosshair
+	target/kbd-experiment target/kbdemo target/crosshair \
+	# target/test-texture
 
-target/crosshair: src/crosshair.s obj/keyboard.o obj/framebuffer.o obj/line.o
+# target/test-texture: src/test-texture.s obj/blitcol.o obj/framebuffer.o obj/clock.o
+#	${ASM}
+
+target/crosshair: src/crosshair.s obj/keyboard.o obj/framebuffer.o obj/line.o obj/clock.o
 	${ASM}
 
 target/kbdemo: src/kbdemo.s obj/keyboard.o
@@ -18,7 +22,7 @@ target/kbdemo: src/kbdemo.s obj/keyboard.o
 target/wiggler: src/wiggler.s obj/framebuffer.o obj/line.o
 	${ASM}
 
-target/sleep: src/sleep.s
+target/sleep: src/sleep.s obj/clock.o
 	${ASM}
 
 target/test-line: src/test-line.s obj/line.o obj/framebuffer.o obj/random.o

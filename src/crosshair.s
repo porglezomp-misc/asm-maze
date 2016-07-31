@@ -36,11 +36,8 @@ movgt	\reg, \max
 
 _start:
 	sub	sp, #4 * 6
-	// Setup the clock
-	mov	r0, #CLOCK_MONOTONIC
-	add	r1, sp, #4 * 4
-	ldr	r7, =SYS_clock_gettime
-	svc	#0
+	add	r0, sp, #4 * 4
+	bl	clock_init
 
 	mov	r0, #384
 	mov	r1, #240
@@ -63,21 +60,11 @@ _start:
 	
 mainloop:
 inctime:
-	ldr	r0, [sp, #4 * 4]	// seconds
-	ldr	r1, [sp, #4 * 5]	// nanoseconds
-
 	// Increment time by one frame
+	add	r0, sp, #4 * 4
+	mov	r1, #0
 	ldr	r2, =NS_PER_FRAME
-	add	r1, r2
-	ldr	r2, =GIGA
-	// Handle nanosecond overflow
-	cmp	r1, r2
-	subge	r1, r2
-	addge	r0, #1
-
-	// Restore the timespec
-	str	r0, [sp, #4 * 4]
-	str	r1, [sp, #4 * 5]
+	bl	clock_inctime
 
 update:
 	bl	kbd_poll
@@ -106,16 +93,8 @@ draw:
 	line	#0, #239, r5, r6
 
 sleep:
-	// Sleep until the next frame
-	mov	r0, #CLOCK_MONOTONIC
-	mov	r1, #TIMER_ABSTIME
-	add	r2, sp, #4 * 4
-	mov	r3, #0
-	ldr	r7, =SYS_clock_nanosleep
-	svc	#0
-	// Continue interrupted sleeps
-	cmp	r0, #0
-	blt	sleep
+	add	r0, sp, #4 * 4
+	bl	clock_sleep
 
 	ldrb	r0, [r4, #1]	// escape
 	cmp	r0, #0
