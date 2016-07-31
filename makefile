@@ -1,17 +1,21 @@
-TestFB.out: test_framebuffer.s framebuffer.o random.o hex.o
+DUMMY:=$(shell mkdir -p obj target)
+
+all: target/test-fb target/test-image target/fb-example target/values
+
+target/test-fb: src/test-fb.s obj/framebuffer.o obj/random.o obj/hex.o
 	gcc -nostdlib -o $@ $^ -g
 
-TestImage.out: test_image.s random.o bmp.o
+target/test-image: src/test-bmp.s obj/random.o obj/bmp.o
 	gcc -nostdlib -o $@ $^ -g
 
-framebuffer-example.out: framebuffer-example.c
+target/fb-example: experiment/fb-example.c
 	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 
-sizetest.out: size.c
-	gcc -std=c11 -o $@ $<
+target/values: experiment/values.c
+	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 
-%.o: %.s
-	gcc -nostdlib -c $< -g
+obj/%.o: lib/%.s
+	gcc -nostdlib -c -o $@ $< -g
 
 clean:
-	rm -f *.o *.out
+	rm -f target/* obj/*
