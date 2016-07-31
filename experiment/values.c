@@ -44,6 +44,7 @@ int main() {
     puts("");
 
     print_int(SYS_read);
+    print_int(SYS_write);
     print_int(SYS_open);
     print_int(SYS_close);
     print_int(SYS_ioctl);
@@ -75,6 +76,8 @@ int main() {
     print_offset(struct input_event, type);
     print_offset(struct input_event, value);
     print_offset(struct input_event, code);
+    print_int(POLLIN);
+    print_int(EV_KEY);
     puts("");
 
     return 0;

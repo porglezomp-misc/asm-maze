@@ -6,7 +6,11 @@ C=gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 all: target/test-fb target/test-image target/fb-example \
 	target/values target/shuffle target/test-line \
 	target/absdiff target/sleep target/wiggler \
-	target/textmode target/graphicsmode target/kbd-experiment
+	target/textmode target/graphicsmode \
+	target/kbd-experiment target/kbdemo
+
+target/kbdemo: src/kbdemo.s obj/keyboard.o
+	${ASM}
 
 target/wiggler: src/wiggler.s obj/framebuffer.o obj/line.o
 	${ASM}
