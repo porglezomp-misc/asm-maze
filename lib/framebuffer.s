@@ -1,6 +1,9 @@
 .globl map_framebuffer
 .globl unmap_framebuffer
 .globl set_resolution
+.globl clear_color
+.globl graphics_mode
+.globl text_mode
 .text
 
 FIX_SIZE = 0x44
@@ -26,6 +29,10 @@ SYS_close = 0x06
 SYS_ioctl = 0x36
 SYS_munmap = 0x5B
 SYS_mmap2 = 0xC0
+
+KDSETMODE = 0x4B3A
+KD_GRAPHICS = 0x1
+KD_TEXT = 0x0
 
 /*
 ==[ FRAMEBUFFER ]======================================
@@ -187,7 +194,90 @@ fail_set:
 	mov	r0, #-1
 	mov	r1, #-1
 	mov	pc, lr
+
+
+/*
+This routine clears the screen to the color specified
+in r0, using the same stack arguments as draw_line: the
+width, height, and pointer should be passed as stack
+arguments.
+*/
+clear_color:
+	ldr	r1, [sp, #4 * 2]
+	ldr	r2, [sp, #4 * 1]
+	mul	r1, r1, r2
+	lsl	r1, #1
+	ldr	r2, [sp] 
+	sub	r1, #2
 	
+loop:
+	strh	r0, [r2, r1]
+	subs	r1, #2
+	bpl loop
+
+	mov	pc, lr
+
+
+/*
+This routine sets the display to graphics mode.
+*/
+graphics_mode:
+	push	{r4, r7}
+	// fd = open("/dev/tty", O_RDWR)
+	ldr	r0, =tty 
+	mov	r1, #O_RDWR
+	mov	r7, #SYS_open
+	svc	#0
+	cmp	r0, #0
+	blt	graphics_mode_done
+	mov	r4, r0
+
+	// ioctl(fd, KDSETMODE, KD_GRAPHICS)
+	// mov	r0, r4
+	ldr	r1, =KDSETMODE
+	mov	r2, #KD_GRAPHICS
+	mov	r7, #SYS_ioctl
+	svc	#0
+
+	// close(fd)
+	mov	r0, r4
+	mov	r7, #SYS_close
+	svc	#0
+graphics_mode_done:
+	pop	{r4, r7}
+	mov	pc, lr
+
+
+/*
+This routine sets the display to text mode.
+*/
+text_mode:
+	push	{r4, r7}
+	// fd = open("/dev/tty", O_RDWR)
+	ldr	r0, =tty 
+	mov	r1, #O_RDWR
+	mov	r7, #SYS_open
+	svc	#0
+	cmp	r0, #0
+	blt	text_mode_done
+	mov	r4, r0
+
+	// ioctl(fd, KDSETMODE, KD_TEXT)
+	// mov	r0, r4
+	ldr	r1, =KDSETMODE
+	mov	r2, #KD_TEXT
+	mov	r7, #SYS_ioctl
+	svc	#0
+
+	// close(fd)
+	mov	r0, r4
+	mov	r7, #SYS_close
+	svc	#0
+text_mode_done:
+	pop	{r4, r7}
+	mov	pc, lr
+
 
 .data
 fb0:	.asciz	"/dev/fb0"
+tty:	.asciz	"/dev/tty"

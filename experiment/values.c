@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <sys/syscall.h>
+#include <sys/kd.h>
 
 #include <fcntl.h>
 #include <stddef.h>
@@ -55,6 +56,10 @@ int main() {
     print_int(CLOCK_MONOTONIC);
     print_int(TIMER_ABSTIME);
     puts("");
+
+    print_int(KDSETMODE);
+    print_int(KD_GRAPHICS);
+    print_int(KD_TEXT);
 
     return 0;
 }

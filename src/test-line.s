@@ -1,4 +1,5 @@
 .globl _start
+.text
 
 .macro line x0 y0 x1 y1
 mov	r0, \x0
@@ -20,6 +21,9 @@ _start:
 	push	{r2}
 	push	{r3}
 	push	{r0}
+
+        mov     r0, #0
+        bl      clear_color
 
 	mov	r10, #32
 loop:
