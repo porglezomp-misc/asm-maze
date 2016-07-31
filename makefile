@@ -1,5 +1,5 @@
-TestFB.out: test_framebuffer.s framebuffer.o
-	gcc -nostdlib -o $@ $^
+TestFB.out: test_framebuffer.s framebuffer.o random.o hex.o
+	gcc -nostdlib -o $@ $^ -g
 
 TestImage.out: test_image.s random.o bmp.o
 	gcc -nostdlib -o $@ $^ -g
