@@ -21,6 +21,7 @@ target/%: experiment/%.s
 target/%: experiment/%.c
 	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 
+target/maze-top: obj/fb.o obj/clock.o obj/kbd.o obj/rect.o
 target/trig-demo: obj/trig.o obj/fb.o obj/clock.o obj/kbd.o \
 	obj/line.o
 target/test-trig: obj/trig.o obj/hex.o
