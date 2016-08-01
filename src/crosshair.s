@@ -14,6 +14,7 @@ GIGA = 1000000000
 
 NS_PER_FRAME = GIGA/30
 
+ESC = 1
 UP = 103
 LEFT = 105
 RIGHT = 106
@@ -59,13 +60,6 @@ _start:
 	ldr	r8, =383
 	
 mainloop:
-inctime:
-	// Increment time by one frame
-	add	r0, sp, #4 * 4
-	mov	r1, #0
-	ldr	r2, =NS_PER_FRAME
-	bl	clock_inctime
-
 update:
 	bl	kbd_poll
 
@@ -93,10 +87,16 @@ draw:
 	line	#0, #239, r5, r6
 
 sleep:
+	// Increment time by one frame
+	add	r0, sp, #4 * 4
+	mov	r1, #0
+	ldr	r2, =NS_PER_FRAME
+	bl	clock_inctime
+
 	add	r0, sp, #4 * 4
 	bl	clock_sleep
 
-	ldrb	r0, [r4, #1]	// escape
+	ldrb	r0, [r4, #ESC]
 	cmp	r0, #0
 	beq	mainloop
 

@@ -209,6 +209,7 @@ arguments.
 	.align
 	.globl clear_color
 clear_color:
+	// Compute the final offset
 	ldr	r1, [sp, #4 * 2]
 	ldr	r2, [sp, #4 * 1]
 	mul	r1, r1, r2
@@ -216,6 +217,7 @@ clear_color:
 	ldr	r2, [sp] 
 	sub	r1, #2
 	
+	// Fill backwards from there
 loop:
 	strh	r0, [r2, r1]
 	subs	r1, #2

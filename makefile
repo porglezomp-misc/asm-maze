@@ -8,10 +8,10 @@ all: target/test-fb target/test-image target/fb-example \
 	target/absdiff target/sleep target/wiggler \
 	target/textmode target/graphicsmode \
 	target/kbd-experiment target/kbdemo target/crosshair \
-	# target/test-texture
+	target/test-texture
 
-# target/test-texture: src/test-texture.s obj/blitcol.o obj/framebuffer.o obj/clock.o
-#	${ASM}
+target/test-texture: src/test-texture.s obj/blitcol.o obj/framebuffer.o obj/clock.o obj/keyboard.o obj/hex.o
+	${ASM}
 
 target/crosshair: src/crosshair.s obj/keyboard.o obj/framebuffer.o obj/line.o obj/clock.o
 	${ASM}

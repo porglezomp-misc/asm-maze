@@ -6,8 +6,8 @@
 	.globl print_nibble
 print_nibble:
 	mov r3, r7 		// We can save with registers!
-				// Calling convention requires saving r4+
-	and r0, r0, #15		// Only print the first 4 bits
+				
+	and r0, r0, #0xF	// Only print the first 4 bits
 	ldr r1, =hexdigits
 	add r1, r0, r1
 
@@ -17,7 +17,7 @@ print_nibble:
 	swi #0
 
 	mov r7, r3
-	bx  lr
+	mov pc, lr
 
 
 	.arm
@@ -91,10 +91,10 @@ newline:
 	ldr r1, =newline_char
 	mov r2, #1
 	mov r7, #4
-	swi #0
+	svc #0
 
 	mov r7, r3
-	bx  lr
+	mov pc, lr
 
 
 	.data
