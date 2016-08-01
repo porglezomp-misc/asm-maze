@@ -229,12 +229,18 @@ loop:
 
 
 /*
-This routine sets the display to graphics mode.
+These routines set the display to graphics or text mode.
 */
 	.arm
 	.align
 	.globl graphics_mode
+	.globl text_mode
 graphics_mode:
+	mov	r12, #KD_GRAPHICS
+	b	set_mode
+text_mode:
+	mov	r12, #KD_TEXT
+set_mode:
 	push	{r4, r7}
 	// fd = open("/dev/tty", O_RDWR)
 	ldr	r0, =tty 
@@ -242,13 +248,13 @@ graphics_mode:
 	mov	r7, #SYS_open
 	svc	#0
 	cmp	r0, #0
-	blt	graphics_mode_done
+	blt	set_mode_done
 	mov	r4, r0
 
 	// ioctl(fd, KDSETMODE, KD_GRAPHICS)
 	// mov	r0, r4
 	ldr	r1, =KDSETMODE
-	mov	r2, #KD_GRAPHICS
+	mov	r2, r12
 	mov	r7, #SYS_ioctl
 	svc	#0
 
@@ -256,40 +262,7 @@ graphics_mode:
 	mov	r0, r4
 	mov	r7, #SYS_close
 	svc	#0
-graphics_mode_done:
-	pop	{r4, r7}
-	mov	pc, lr
-
-
-/*
-This routine sets the display to text mode.
-*/
-	.arm
-	.align
-	.globl text_mode
-text_mode:
-	push	{r4, r7}
-	// fd = open("/dev/tty", O_RDWR)
-	ldr	r0, =tty 
-	mov	r1, #O_RDWR
-	mov	r7, #SYS_open
-	svc	#0
-	cmp	r0, #0
-	blt	text_mode_done
-	mov	r4, r0
-
-	// ioctl(fd, KDSETMODE, KD_TEXT)
-	// mov	r0, r4
-	ldr	r1, =KDSETMODE
-	mov	r2, #KD_TEXT
-	mov	r7, #SYS_ioctl
-	svc	#0
-
-	// close(fd)
-	mov	r0, r4
-	mov	r7, #SYS_close
-	svc	#0
-text_mode_done:
+set_mode_done:
 	pop	{r4, r7}
 	mov	pc, lr
 
