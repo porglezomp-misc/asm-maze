@@ -1,11 +1,5 @@
 .text
 
-.macro swapop op a b tmp
-\op	\tmp, \a
-\op	\a, \b
-\op	\b, \tmp
-.endm
-
 /*
 Draws a line between (r0,r1) and (r2,r3), using a screen
 specified at the top of the stack, with width, height,
@@ -44,6 +38,13 @@ draw_line:
 horiz:
 	// We want to work from left to right
 	cmp	x0, x1
+
+.macro swapop op a b tmp
+\op	\tmp, \a
+\op	\a, \b
+\op	\b, \tmp
+.endm
+
 	swapop	movgt, x0, x1, r9
 	swapop	movgt, y0, y1, r9
 

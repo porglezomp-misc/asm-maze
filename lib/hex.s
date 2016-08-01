@@ -1,5 +1,6 @@
 	.text
 
+// @Performance: These routines could all make fewer syscalls
 
 	.arm
 	.align
@@ -11,7 +12,7 @@ print_nibble:
 	ldr r1, =hexdigits
 	add r1, r0, r1
 
-	mov r0, #0 		// ??? What does this do?
+	mov r0, #0
 	mov r2, #1
 	mov r7, #4
 	swi #0
