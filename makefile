@@ -21,6 +21,7 @@ target/%: experiment/%.s
 target/%: experiment/%.c
 	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 
+target/test-trig: obj/trig.o obj/hex.o
 target/test-texture: obj/blitcol.o obj/framebuffer.o \
 	obj/clock.o obj/keyboard.o obj/hex.o
 target/crosshair: obj/keyboard.o obj/framebuffer.o \

@@ -1,6 +1,7 @@
 	.text
 
 // @Performance: These routines could all make fewer syscalls
+STDOUT = 1
 
 	.arm
 	.align
@@ -12,7 +13,7 @@ print_nibble:
 	ldr r1, =hexdigits
 	add r1, r0, r1
 
-	mov r0, #0
+	mov r0, #STDOUT
 	mov r2, #1
 	mov r7, #4
 	swi #0
@@ -88,7 +89,7 @@ print_word:
 newline:
 	mov r3, r7
 	
-	mov r0, #0
+	mov r0, #STDOUT
 	ldr r1, =newline_char
 	mov r2, #1
 	mov r7, #4
