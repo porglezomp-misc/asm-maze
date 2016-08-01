@@ -9,11 +9,11 @@ w .req r4
 h .req r5
 
 _start:
-	bl	map_framebuffer
-	mov	base, r0
-	mov	len, r1
-	mov	w, r2
-	mov	h, r3
+	bl	fb_map
+	ldr	base, [r0, #8]
+	ldr	len, [r0, #12]
+	ldr	w, [r0, #0]
+	ldr	h, [r0, #4]
 
 	mov	y, #0
 row:
@@ -41,9 +41,7 @@ loop:
 	cmp	y, h
 	blt	row
 
-	mov	r0, base
-	mov	r1, len
-	bl	unmap_framebuffer
+	bl	fb_unmap
 
 	mov	r0, #0
 	mov	r7, #1

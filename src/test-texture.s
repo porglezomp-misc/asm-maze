@@ -5,24 +5,18 @@ ESC = 1
 
 	.globl _start
 _start:
-	sub	sp, #4 * 6
+	sub	sp, #4 * 2
 
-	add	r0, sp, #4 * 4
+	mov	r0, sp
 	bl	clock_init
 
 	mov	r0, #384
 	mov	r1, #240
-	bl	set_resolution
-
+	bl	fb_set_res
 	bl	graphics_mode
-
-	bl	map_framebuffer
-	str	r1, [sp, #4 * 3]
-	str	r2, [sp, #4 * 2]
-	str	r3, [sp, #4 * 1]
-	str	r0, [sp]
-
+	bl	fb_map
 	bl	kbd_open
+
 	ldr	r4, =kbd_keys
 
 mainloop:
@@ -30,7 +24,7 @@ update:
 	bl	kbd_poll
 draw:
 	mov	r0, #0
-	bl	clear_color
+	bl	fb_clear_color
 
 	ldr	r5, =texture
 	.macro	column scol tcol h
@@ -58,12 +52,12 @@ drawloop:
 	blt	drawloop
 
 sleep:
-	add	r0, sp, #4 * 4
+	mov	r0, sp
 	mov	r1, #0
 	ldr	r2, =NS_PER_FRAME
 	bl	clock_inctime
 
-	add	r0, sp, #4 * 4
+	mov	r0, sp
 	bl	clock_sleep
 
 	ldrb	r0, [r4, #ESC]
@@ -71,16 +65,13 @@ sleep:
 	beq	mainloop
 
 done:
-	ldr	r0, [sp]
-	ldr	r1, [sp, #4 * 3]
-	bl	unmap_framebuffer
-
+	bl	fb_unmap
 	bl	kbd_close
 	bl	text_mode
 
 	ldr	r0, =1680
 	ldr	r1, =1050
-	bl	set_resolution
+	bl	fb_set_res
 
 	mov	r0, #0
 	mov	r7, #1

@@ -1,5 +1,5 @@
-.globl _start
-.text
+        .globl _start
+        .text
 
 .macro line x0 y0 x1 y1
 mov	r0, \x0
@@ -12,18 +12,12 @@ bl	draw_line
 _start:
 	mov	r0, #384
 	mov	r1, #240
-	bl	set_resolution
+	bl	fb_set_res
 
-	bl	map_framebuffer
-	mov	r10, r0
-	mov	r11, r1
-
-	push	{r2}
-	push	{r3}
-	push	{r0}
+	bl	fb_map
 
         mov     r0, #0
-        bl      clear_color
+        bl      fb_clear_color
 
 	mov	r10, #32
 loop:
@@ -43,9 +37,7 @@ loop:
 
 	add	sp, #12
 
-	mov	r0, r10
-	mov	r1, r11
-	bl	unmap_framebuffer
+	bl	fb_unmap
 
 	mov	r0, #0
 	mov	r7, #1

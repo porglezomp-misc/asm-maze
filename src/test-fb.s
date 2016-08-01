@@ -1,11 +1,10 @@
 .globl _start
 
 _start:
-	bl	map_framebuffer
-	mov	r4, r0
-	mov	r5, r1
-	mov	r6, r2			@width
-	mov	r7, r3 			@height
+	bl	fb_map
+	ldr	r4, [r0, #8]
+	ldr	r5, [r0, #12]
+	ldm	r0, {r6, r7}
 
 	mov	r1, #0
 	mov	r3, #0
@@ -28,9 +27,7 @@ pix:
 	blt	row
 
 done:
-	mov	r0, r4
-	mov	r1, r5
-	bl	unmap_framebuffer
+	bl	fb_unmap
 
 	mov	r0, #0
 	mov	r7, #1

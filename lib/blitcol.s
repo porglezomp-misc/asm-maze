@@ -1,16 +1,11 @@
 	.text
 
-	
+
 /*
 Takes the screen column in r0, the texture column in r1,
 the screen height in r2, and a texture pointer in r3.
 The texture pointer should point to the data, with the
 size stored in the 4 bytes immediately before it.
-The screen information is stored on the stack in the
-same format as the the line rendering work:
-sp+8: width
-sp+4: height
-sp+0: pointer
 */
 	.arm
 	.align
@@ -32,11 +27,11 @@ blit_col:
 	add	end, tex, end, LSL htex
 
 	// Load the screen dimensions
-	wscr .req r6
+	wscr .req r4
 	hscr .req r5
-	base .req r4
-	add	r4, sp, #4 * 7
-	ldm	r4, {base, hscr, wscr}
+	base .req r6
+	ldr	r4, =fb_data
+	ldm	r4, {wscr, hscr, base}
 
 	// Point base at the middle of the screen column
 	add	base, base, r0, LSL #1

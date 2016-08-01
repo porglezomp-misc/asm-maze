@@ -33,8 +33,8 @@ KD_TEXT = 0x0
 */
 	.arm
 	.align
-	.globl map_framebuffer
-map_framebuffer:
+	.globl fb_map
+fb_map:
 	push	{r4, r5, r6, r7, r8, r9, r10}
 	sub	sp, #FIX_SIZE + VAR_SIZE
 
@@ -91,11 +91,11 @@ map_framebuffer:
 	mov	r7, #SYS_close
 	svc	#0
 
-	// return fb, size, width, height
-	mov	r0, r5
-	mov	r1, r8
-	mov	r2, r9
-	mov	r3, r10
+	// Store the framebuffer parameters
+	ldr	r0, =fb_data
+	str	r5, [r0, #8]
+	str	r8, [r0, #12]
+	stm	r0, {r9, r10}
 	add	sp, #FIX_SIZE + VAR_SIZE
 	pop	{r4, r5, r6, r7, r8, r9, r10}
 	mov	pc, lr
@@ -111,15 +111,17 @@ fail:
 
 
 /*
-This routine closes the resources associated with the
-framebuffer. It takes the pointer to the mmap'd buffer
-in r0 and the length of the buffer in r1.
+This routine unmaps the framebuffer memory.
+It takes no arguments.
 */
 	.arm
 	.align
-	.globl unmap_framebuffer
-unmap_framebuffer:
+	.globl fb_unmap
+fb_unmap:
 	mov	r2, r7
+	ldr	r0, =fb_data
+	add	r0, #8
+	ldm	r0, {r0, r1}
 	// munmap(r0, r1)
 	mov	r7, #SYS_munmap
 	svc	#0
@@ -135,8 +137,8 @@ fails, it returns the resolution -1, -1.
 */
 	.arm
 	.align
-	.globl set_resolution
-set_resolution:
+	.globl fb_set_res
+fb_set_res:
 	sub	sp, #VAR_SIZE
 	push	{r4, r5, r7}
 	mov	r4, r0
@@ -207,14 +209,14 @@ arguments.
 */
 	.arm
 	.align
-	.globl clear_color
-clear_color:
+	.globl fb_clear_color
+fb_clear_color:
 	// Compute the final offset
-	ldr	r1, [sp, #4 * 2]
-	ldr	r2, [sp, #4 * 1]
+	ldr	r3, =fb_data
+	ldm	r3, {r1, r2}
 	mul	r1, r1, r2
 	lsl	r1, #1
-	ldr	r2, [sp] 
+	ldr	r2, [r3, #8] 
 	sub	r1, #2
 	
 	// Fill backwards from there
@@ -295,3 +297,9 @@ text_mode_done:
 .data
 fb0:	.asciz	"/dev/fb0"
 tty:	.asciz	"/dev/tty"
+.globl fb_data
+fb_data:
+	.4byte	0 // width
+	.4byte	0 // height
+	.4byte	0 // pointer
+	.4byte	0 // buffer size

@@ -23,30 +23,23 @@ bl	draw_line
 .endm
 
 _start:
-	sub	sp, #4 * 6
+	sub	sp, #4 * 2
 	// Setup the clock
 	mov	r0, #CLOCK_MONOTONIC
-	add	r1, sp, #4 * 4
+	mov	r1, sp
 	ldr	r7, =SYS_clock_gettime
 	svc	#0
 
 	mov	r0, #384
 	mov	r1, #240
-	bl	set_resolution
-
+	bl	fb_set_res
 	bl	graphics_mode
-
-	bl	map_framebuffer
-	str	r1, [sp, #4 * 3]
-	str	r2, [sp, #4 * 2]
-	str	r3, [sp, #4 * 1]
-	str	r0, [sp]
+	bl	fb_map
 
 	mov	r4, #120
 mainloop:
 inctime:
-	ldr	r0, [sp, #4 * 4]	// seconds
-	ldr	r1, [sp, #4 * 5]	// nanoseconds
+	ldm	sp, {r0, r1}
 
 	// Increment time by one frame
 	ldr	r2, =NS_PER_FRAME
@@ -58,12 +51,11 @@ inctime:
 	addge	r0, #1
 
 	// Restore the timespec
-	str	r0, [sp, #4 * 4]
-	str	r1, [sp, #4 * 5]
+	stm	sp, {r0, r1}
 
 draw:
 	mov	r0, #0
-	bl	clear_color
+	bl	fb_clear_color
 	// Pingpong from top and bottom of screen
 	and	r5, r4, #0xF
 	tst	r4, #0x10
@@ -86,7 +78,7 @@ sleep:
 	// Sleep until the next frame
 	mov	r0, #CLOCK_MONOTONIC
 	mov	r1, #TIMER_ABSTIME
-	add	r2, sp, #4 * 4
+	mov	r2, sp
 	mov	r3, #0
 	ldr	r7, =SYS_clock_nanosleep
 	svc	#0
@@ -99,15 +91,12 @@ sleep:
 	bgt	mainloop
 
 done:
-	ldr	r0, [sp]
-	ldr	r1, [sp, #4 * 3]
-	bl	unmap_framebuffer
-
+	bl	fb_unmap
 	bl	text_mode
 
 	ldr	r0, =1680
 	ldr	r1, =1050
-	bl	set_resolution
+	bl	fb_set_res
 
 	mov	r0, #0
 	mov	r7, #1

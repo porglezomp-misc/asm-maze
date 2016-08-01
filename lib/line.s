@@ -1,4 +1,5 @@
-.text
+        .text
+
 
 /*
 Draws a line between (r0,r1) and (r2,r3), using a screen
@@ -21,9 +22,8 @@ draw_line:
 	dx .req r7
 	dy .req r8
 
-	ldr	w, [sp, #4 * 10]
-	ldr	h, [sp, #4 * 9]
-	ldr	base, [sp, #4 * 8]
+        ldr     r4, =fb_data
+        ldm     r4, {w, h, base}
 
 	mov	r10, #0x00FF
 	orr	r10, #0xFF00
