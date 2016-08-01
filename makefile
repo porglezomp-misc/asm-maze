@@ -21,19 +21,18 @@ target/%: experiment/%.s
 target/%: experiment/%.c
 	gcc -std=c11 -o $@ $< -Wall -Werror -Wextra -pedantic
 
-target/trig-demo: obj/trig.o obj/framebuffer.o obj/clock.o \
-	obj/keyboard.o obj/line.o
+target/trig-demo: obj/trig.o obj/fb.o obj/clock.o obj/kbd.o \
+	obj/line.o
 target/test-trig: obj/trig.o obj/hex.o
-target/test-texture: obj/blitcol.o obj/framebuffer.o \
-	obj/clock.o obj/keyboard.o obj/hex.o
-target/crosshair: obj/keyboard.o obj/framebuffer.o \
-	obj/line.o obj/clock.o
-target/kbdemo: obj/keyboard.o
-target/wiggler: obj/framebuffer.o obj/line.o
+target/test-texture: obj/blitcol.o obj/fb.o obj/clock.o \
+	obj/kbd.o obj/hex.o
+target/crosshair: obj/kbd.o obj/fb.o obj/line.o obj/clock.o
+target/kbdemo: obj/kbd.o
+target/wiggler: obj/fb.o obj/line.o
 target/sleep: obj/clock.o
-target/test-line: obj/line.o obj/framebuffer.o obj/random.o
-target/shuffle: obj/framebuffer.o obj/hex.o
-target/test-fb: obj/framebuffer.o obj/random.o obj/hex.o
+target/test-line: obj/line.o obj/fb.o obj/random.o
+target/shuffle: obj/fb.o obj/hex.o
+target/test-fb: obj/fb.o obj/random.o obj/hex.o
 target/test-bmp: obj/random.o obj/bmp.o
 target/absdiff: obj/hex.o
 
