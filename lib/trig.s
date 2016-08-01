@@ -18,7 +18,7 @@ rsblt	\reg, \reg, #0
 .endm
 
 isin12:
-	sub	r0, #1000
+	sub	r0, #0x1000
 icos12:
 	abs	r0
 	mov	r1, #0xff

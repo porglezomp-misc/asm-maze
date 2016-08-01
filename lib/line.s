@@ -62,13 +62,18 @@ hloop:
 
 	add	y1, dy
 	cmp	y1, dx
-        bgt     hyoff
+        // This is for the every-touched-pixel line,
+        // but we'll use standard Bresenham here.
+        // bgt     hyoff
+	subgt	y1, dx
+	addgt	y0, r9
 hinc:
 	add	x0, #1
 	cmp	x0, x1
-	blt	hloop
+	ble	hloop
 	b end
 
+        /*
 hyoff:
 	sub	y1, dx
 	add	y0, r9
@@ -76,6 +81,7 @@ hyoff:
 	add	r11, base, r11, LSL #1
 	strh	r10, [r11]
         b       hinc
+        */
 
 vert:
 	// We want to work from top to bottom
@@ -98,13 +104,16 @@ vloop:
 
 	add	x1, dx
 	cmp	x1, dy
-        bgt     vxoff
+        // bgt     vxoff
+	subgt	x1, dy
+	addgt	x0, r9
 vinc:
 	add	y0, #1
 	cmp	y0, y1
-	blt	vloop
+	ble	vloop
         b end
 
+        /*
 vxoff:
 	sub	x1, dy
 	add	x0, r9
@@ -112,6 +121,7 @@ vxoff:
 	add	r11, base, r11, LSL #1
 	strh	r10, [r11]
         b       vinc
+        */
 
 end:
 	pop	{r4-r11}
