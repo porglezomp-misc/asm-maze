@@ -22,7 +22,8 @@ draw_rect:
 	add	base, r1, LSL #1
 
 	lsl	r2, #1
-	mvn	r12, #0
+	ldr	r12, =rect_color
+	ldr	r12, [r12]
 row:
 	mov	r1, #0
 pix:
@@ -39,3 +40,15 @@ pix:
 done:
 	pop	{r4}
 	mov	pc, lr
+
+	.arm
+	.align
+	.globl	rect_set_color
+rect_set_color:
+	ldr	r1, =rect_color
+	str	r0, [r1]
+	mov	pc, lr
+
+	.data
+rect_color:
+	.word	0xFFFF

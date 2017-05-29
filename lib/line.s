@@ -10,7 +10,7 @@ and pointer.
         .align
         .globl draw_line
 draw_line:
-	push	{r4-r11}
+	push	{r4-r11, lr}
 
 	x0 .req r0
 	y0 .req r1
@@ -29,9 +29,9 @@ draw_line:
 	orr	r10, #0xFF00
 
 	subs	dx, x0, x1
-	rsbmi	dx, r7, #0	// abs(dx)
+	rsbmi	dx, dx, #0	// abs(dx)
 	subs	dy, y0, y1
-	rsbmi	dy, r8, #0	// abs(dy)
+	rsbmi	dy, dy, #0	// abs(dy)
 	cmp	dx, dy 
 	blt	vert
 
@@ -124,8 +124,7 @@ vxoff:
         */
 
 end:
-	pop	{r4-r11}
-	mov	pc, lr
+	pop	{r4-r11, pc}
 
 	.unreq x0
 	.unreq y0
