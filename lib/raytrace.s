@@ -160,6 +160,26 @@ ret:
 	.unreq dx
 	.unreq dy
 
+/*
+Trace to find the exact intersection on a specific block.
+
+Arguments:
+ - r0, r1: the origin point for the ray in sub-grid coordinates
+ - r2, r3: a second point on the ray to produce the direction
+ - r4, r5: the grid coordinates of the hit tile
+ - r6: whether the collision was horizontal or vertical
+
+Return:
+ - r0: the distance to the intersection point
+ - r1: the texture coordinate of the intersection point
+       from 0 to 256
+*/
+	.arm
+	.align
+	.globl	tr_trace
+tr_trace:
+	mov	pc, lr
+
 	.data
 tr_data:
 	.space	4
