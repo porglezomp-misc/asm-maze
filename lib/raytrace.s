@@ -1,5 +1,7 @@
 	.text
 
+FRAC = 12
+
 /*
 Sets the trace environment.
 
@@ -20,29 +22,29 @@ tr_set_env:
 /*
 Trace to find the block where an intersection occurs.
 
-This takes coordinates in 8 bit sub-grid precision. This means
+This takes coordinates in 12 bit sub-grid precision. This means
 0,0 is the upper left corner, and 256,256 is the next pixel
 diagonally down.
 
-NOTE: For simplicity, this requires that the map be entirely
-surrounded by solid walls, or else this will run off in an
-infinite loop outside of the grid. If this becomes a problem,
-then you should add bounds checking in the search loop.
+NOTE: This won't bounds check to ensure that memory accesses
+stay inside the grid. Some good solutions are to entirely
+surround your map with solid blocks, or to ensure that the end
+point of your line segments are in-bounds.
 
 Arguments:
- - r0, r1: the origin point for the ray in sub-grid coordinates
- - r2, r3: a second point on the ray to produce the direction
+ - r0, r1: the origin of the line segment in sub-grid coordinates
+ - r2, r3: the second vertex of the line segment
 
 Return:
  - r0, r1: the grid coordinates of the intersection
- - r2: 0 if it intersected horizontally, 1 if vertically.
-   That is, for 0 the edge is |, for 1 the edge is _
+ - r2: 0 if no intersection, 1 if it intersected horizontally,
+   2 if vertically. That is, 1 for | edges, 2 for _ edges.
 */
 	.arm
 	.align
 	.globl	tr_trace_block
 tr_trace_block:
-	push	{r4-r10, lr}
+	push	{r4-r12, lr}
 
 	x0 .req r0
 	y0 .req r1
@@ -59,6 +61,9 @@ tr_trace_block:
 
 	xinc .req r2
 	yinc .req r3
+
+	lsr	r11, x1, #FRAC
+	lsr	r12, y1, #FRAC
 
 	// We want dy & dx to be absolute offset, and
 	// xinc and yinc are the sign of the offset.
@@ -80,12 +85,15 @@ tr_trace_block:
 // Horizontal drawing
 horiz:
 	yerr .req r9
+	xend .req r11
 	// @Todo: Make sure that this error is in the
 	//        correct direction...
-	// We use 8 bits of sub-tile positioning
-	and	yerr, y0, #0xFF
-	lsr	y0, #8
-	lsr	x0, #8
+	// We use 12 bits of sub-tile positioning
+	mov	r12, #0x0FF
+	orr	r12, #0xF00
+	and	yerr, y0, r12
+	lsr	y0, #FRAC
+	lsr	x0, #FRAC
 hloop:
 	add	yerr, dy
 	cmp	yerr, dx
@@ -99,7 +107,9 @@ hyoff:
 	ldrb	r10, [r10]
 
 	cmp	r10, #0
-	movne	r2, #1
+	lslne	r0, x0, #FRAC
+	lslne	r1, y0, #FRAC
+	movne	r2, #2
 	bne	ret
 hinc:
 	add	x0, xinc
@@ -108,20 +118,35 @@ hinc:
 	add	r10, base, r10
 	ldrb	r10, [r10]
 
+	// Only trace inside the line-segment
+	cmp	xinc, #1
+	cmpne	xend, x0
+	cmpeq	x0, xend
+	lslgt	r0, x0, #FRAC
+	lslgt	r1, y0, #FRAC
+	movgt	r2, #0
+	bgt	ret
+
 	cmp	r10, #0
-	movne	r2, #0
+	lslne	r0, x0, #FRAC
+	lslne	r1, y0, #FRAC
+	movne	r2, #1
 	bne	ret
 
 	b	hloop
 	.unreq yerr
+	.unreq xend
 	
 // Vertical drawing
 vert:
 	xerr .req r9
-	// We use 8 bits of sub-tile positioning
-	and	xerr, x0, #0xFF
-	lsr	x0, #8
-	lsr	y0, #8
+	yend .req r12
+	// We use 12 bits of sub-tile positioning
+	mov	r11, #0x0FF
+	orr	r11, #0xF00
+	and	xerr, x0, r11
+	lsr	x0, #FRAC
+	lsr	y0, #FRAC
 vloop:
 	add	xerr, dx
 	cmp	xerr, dy
@@ -135,7 +160,9 @@ vxoff:
 	ldrb	r10, [r10]
 
 	cmp	r10, #0
-	movne	r2, #0
+	lslne	r0, x0, #FRAC
+	lslne	r1, y0, #FRAC
+	movne	r2, #1
 	bne	ret
 vinc:
 	add	y0, yinc
@@ -144,13 +171,27 @@ vinc:
 	add	r10, base, r10
 	ldrb	r10, [r10]
 
+	// Check that we haven't gone past the end of our segment
+	cmp	yinc, #1
+	cmpne	yend, y0
+	cmpeq	y0, yend
+	lslgt	r0, x0, #FRAC
+	lslgt	r1, y0, #FRAC
+	movgt	r2, #0
+	bgt	ret
+
 	cmp	r10, #0
-	movne	r2, #1
-	beq	vloop
+	lslne	r0, x0, #FRAC
+	lslne	r1, y0, #FRAC
+	movne	r2, #2
+	bne	ret
+
+	b	vloop
 	.unreq xerr
+	.unreq yend
 
 ret:
-	pop	{r4-r10, pc}
+	pop	{r4-r12, pc}
 
 	.unreq x0
 	.unreq y0
@@ -159,26 +200,6 @@ ret:
 	.unreq h
 	.unreq dx
 	.unreq dy
-
-/*
-Trace to find the exact intersection on a specific block.
-
-Arguments:
- - r0, r1: the origin point for the ray in sub-grid coordinates
- - r2, r3: a second point on the ray to produce the direction
- - r4, r5: the grid coordinates of the hit tile
- - r6: whether the collision was horizontal or vertical
-
-Return:
- - r0: the distance to the intersection point
- - r1: the texture coordinate of the intersection point
-       from 0 to 256
-*/
-	.arm
-	.align
-	.globl	tr_trace
-tr_trace:
-	mov	pc, lr
 
 	.data
 tr_data:
