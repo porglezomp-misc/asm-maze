@@ -49,9 +49,11 @@ target/maze-dir: obj/fb.o obj/clock.o obj/kbd.o obj/rect.o \
 	obj/raytrace.o obj/line.o obj/trig.o
 target/mazegen: obj/bmp.o obj/maze.o obj/random.o obj/hex.o
 
+# Library dependencies
 obj/rect.size: obj/fb.o
 obj/line.size: obj/fb.o
 obj/blitcol.size: obj/fb.o
+obj/maze.size: obj/random.o
 
 strip: all
 	@echo "========"

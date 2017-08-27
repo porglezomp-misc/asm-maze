@@ -12,18 +12,18 @@ else you won't have good entropy.
 	.align
 	.globl random_word
 random_word:
-	push	{r4}
+	push	{r4, r5}
 	ldr	r4, =xorshift_state
 	ldm	r4, {r0, r1, r2, r3}
 
-	eor	r12, r0, r0, LSL #11
-	eor	r12, r12, LSR #8
+	eor	r5, r0, r0, LSL #11
+	eor	r5, r12, LSR #8
 	eor	r0, r3, r3, LSR #19
-	eor	r12, r0
+	eor	r5, r0
 
-	stm	r4, {r1, r2, r3, r12}
-	mov	r0, r12
-	pop	{r4}
+	stm	r4, {r1, r2, r3, r5}
+	mov	r0, r5
+	pop	{r4, r5}
 	mov	pc, lr
 
 /*

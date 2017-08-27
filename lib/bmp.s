@@ -61,7 +61,7 @@ bmp_write_header:
 
 	/* Data size, multiply by 3 */
 	add	r0, r0, LSL #1
-	/* Round up to the nearest multiple of 4 */
+	/* Round width up to the nearest multiple of 4 */
 	add	r0, #3
 	bic	r0, #0x3
 	mul	r0, r1
