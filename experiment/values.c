@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <poll.h>
+#include <errno.h>
 
 #define print_sizeof(X) printf("sizeof(" #X "): 0x%x\n", sizeof(X))
 #define print_offset(X, M) printf("offsetof(" #X ", " #M "): 0x%x\n", offsetof(X, M))
@@ -61,6 +62,12 @@ int main() {
     print_offset(struct timespec, tv_nsec);
     print_int(CLOCK_MONOTONIC);
     print_int(TIMER_ABSTIME);
+    puts("");
+
+    print_int(EBADF);
+    print_int(EFAULT);
+    print_int(EINVAL);
+    print_int(EIO);
     puts("");
 
     print_int(KDSETMODE);

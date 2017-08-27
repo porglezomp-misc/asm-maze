@@ -1,4 +1,10 @@
-.text
+	.text
+
+O_RDONLY = 0x0
+
+SYS_read = 0x3
+SYS_open = 0x5
+SYS_close = 0x6
 
 /*
 ==[ XORSHIFT ]=========================================
@@ -40,12 +46,44 @@ random_set_seed:
 	
 	mov	pc, lr
 
-.data
+/*
+This routine seeds from /dev/urandom
+*/
+
+	.arm
+	.align
+	.globl random_seed_dev
+random_seed_dev:
+	push	{r4, r7}
+
+	ldr	r0, =random_dev_path
+	mov	r1, #O_RDONLY
+	mov	r7, #SYS_open
+	svc	#0
+	mov	r4, r0
+
+	ldr	r1, =xorshift_state
+	mov	r2, #16
+	mov	r7, #SYS_read
+	svc	#0
+
+	mov	r0, r4
+	mov	r7, #SYS_close
+	svc	#0
+
+	pop	{r4, r7}
+	mov	pc, lr
+
+random_dev_path:
+	# @Todo: Size, /dev/random is smaller
+	.asciz	"/dev/urandom"
+
+
+	.data
 /*
 This initial state vector was produced using
 random.org. It is not necessarily a good initial seed,
 but it is a random one.
 */
 xorshift_state:
-.word 0x150E8455, 0x8B4CCABC, 0xD73EB53A, 0x5C6776B1
-
+	.word	0x150E8455, 0x8B4CCABC, 0xD73EB53A, 0x5C6776B1
