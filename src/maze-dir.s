@@ -11,7 +11,7 @@ DOWN = 108
 
 	.globl _start
 _start:
-	sub	sp, #4
+	sub	sp, #8
 	mov	r0, sp
 	bl	clock_init
 

@@ -19,13 +19,15 @@ SYS_open = 0x5
 SYS_close = 0x6
 SYS_poll = 0xA8
 
-
 	.arm
 	.align
 	.globl kbd_open
 kbd_open:
 	mov	r2, r7
 
+	ldr	r1, =kbd_keys
+
+# @Todo: Handle checking keyboard capabilities
 	ldr	r0, =kbd_path
 	mov	r1, #O_RDONLY
 	mov	r7, #SYS_open
@@ -106,6 +108,18 @@ done:
 
 
 	.data
+
+kbd_path:
+	.asciz	"/dev/input/eventN"
+kbd_idx_off = 16
+kbd_msg:
+	.ascii	"no kbd\n"
+kdb_msg_len = . - kbd_msg
+kbd_fd:
+	.word	-1
+
+
+	.bss
 /*
 kbd_keys is a global array of booleans, if an entry is
 one that key is pressed, if it's zero then it's not.
@@ -113,12 +127,6 @@ one that key is pressed, if it's zero then it's not.
 	.align
 	.globl kbd_keys
 kbd_keys:
-# @Todo: Optimize size (use stack)
-	.space	256
+	.zero	256
 
-kbd_path:
-	.asciz	"/dev/input/event2"
-kdb_msg:
-	.asciz	"no kbd"
 
-kbd_fd:	.word	-1
