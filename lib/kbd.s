@@ -113,9 +113,12 @@ one that key is pressed, if it's zero then it's not.
 	.align
 	.globl kbd_keys
 kbd_keys:
+# @Todo: Optimize size (use stack)
 	.space	256
 
 kbd_path:
-	.asciz	"/dev/input/event0"
+	.asciz	"/dev/input/event2"
+kdb_msg:
+	.asciz	"no kbd"
 
 kbd_fd:	.word	-1

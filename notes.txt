@@ -1,0 +1,5 @@
+Keyboard checking:
+
+- Scan all of the /dev/input/eventN devices
+- Use ioctl EVIOCGBIT(0, sizeof(evbit)) to check for EV_KEY
+- If it's set, then use EVIOCGBIT(EV_KEY, sizeof(keybit)) to check if interesting keys are supported
