@@ -2,5 +2,6 @@
 *.swo
 *.o
 *.bmp
+*.size
 
 /target/

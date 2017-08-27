@@ -6,11 +6,16 @@ EXP=$(C_EXP:experiment/%.c=target/%) \
 	$(ASM_EXP:experiment/%.s=target/%)
 SRC=$(wildcard src/*.s)
 PROG=$(SRC:src/%.s=target/%)
+LIB=$(wildcard lib/*.s)
+SIZE=$(LIB:lib/%.s=obj/%.size)
 
-all: $(EXP) $(PROG)
+all: $(EXP) $(PROG) $(SIZE)
 
 obj/%.o: lib/%.s
 	gcc -nostdlib -c -o $@ $< -g
+
+obj/%.size: src/exit.s obj/%.o
+	gcc -nostdlib -o $@ $^ -g -Wl,--build-id=none
 
 target/%: src/%.s
 	gcc -nostdlib -o $@ $^ -g -Wl,--build-id=none
@@ -44,12 +49,27 @@ target/maze-dir: obj/fb.o obj/clock.o obj/kbd.o obj/rect.o \
 	obj/raytrace.o obj/line.o obj/trig.o
 target/mazegen: obj/bmp.o obj/maze.o obj/random.o obj/hex.o
 
+obj/rect.size: obj/fb.o
+obj/line.size: obj/fb.o
+obj/blitcol.size: obj/fb.o
+
 strip: all
-	@echo "BEFORE"
+	@echo "========"
+	@echo " BEFORE"
+	@echo "========"
 	du -hb target/*
-	for f in target/*; do strip -s -R .ARM* $$f; done
-	@echo "AFTER"
+	for f in target/* obj/*.size; do \
+		strip -s -R .ARM* $$f; done
+	@echo "======="
+	@echo " AFTER"
+	@echo "======="
 	du -hb target/*
+
+libsize: strip
+	@echo "==============="
+	@echo " LIBRARY SIZES"
+	@echo "==============="
+	du -hb obj/*.size
 
 clean:
 	rm -f target/* obj/*
