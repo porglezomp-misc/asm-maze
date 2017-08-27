@@ -3,3 +3,30 @@ Keyboard checking:
 - Scan all of the /dev/input/eventN devices
 - Use ioctl EVIOCGBIT(0, sizeof(evbit)) to check for EV_KEY
 - If it's set, then use EVIOCGBIT(EV_KEY, sizeof(keybit)) to check if interesting keys are supported
+
+Random selection:
+
+Assume we're picking a direction, and some are potentially invalid.
+Can we handle this by moving clockwise from a random selection?
+
+NESW NESW
+---- ----
+     NESW
+   * NESN
+  *  NEWW
+ *   NSSW
+*    EESW
+  ** NENN
+ **  NWWW
+**   SSSW
+*  * EESE
+ * * NSSN
+* *  EEWW
+ *** NNNN
+* ** EEEE
+** * SSSS
+**** !!!!
+
+This looks like it behaves randomly!
+
+
