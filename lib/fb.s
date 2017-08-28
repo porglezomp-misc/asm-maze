@@ -267,10 +267,10 @@ set_mode_done:
 	mov	pc, lr
 
 
-.data
+	.data
 fb0:	.asciz	"/dev/fb0"
 tty:	.asciz	"/dev/tty"
-.globl fb_data
+	.globl fb_data
 fb_data:
 	.4byte	0 // width
 	.4byte	0 // height

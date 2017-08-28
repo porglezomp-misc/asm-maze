@@ -23,7 +23,7 @@ tr_set_env:
 Trace to find the block where an intersection occurs.
 
 This takes coordinates in 12 bit sub-grid precision. This means
-0,0 is the upper left corner, and 256,256 is the next pixel
+0,0 is the upper left corner, and 4096,4096 is the next pixel
 diagonally down.
 
 NOTE: This won't bounds check to ensure that memory accesses
@@ -44,7 +44,7 @@ Return:
 	.align
 	.globl	tr_trace_block
 tr_trace_block:
-	push	{r4-r12, lr}
+	push	{r4-r12}
 
 	x0 .req r0
 	y0 .req r1
@@ -191,7 +191,8 @@ vinc:
 	.unreq yend
 
 ret:
-	pop	{r4-r12, pc}
+	pop	{r4-r12}
+	mov	pc, lr
 
 	.unreq x0
 	.unreq y0

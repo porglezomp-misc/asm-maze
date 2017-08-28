@@ -110,7 +110,7 @@ done:
 	.data
 
 kbd_path:
-	.asciz	"/dev/input/eventN"
+	.asciz	"/dev/input/event2"
 kbd_idx_off = 16
 kbd_msg:
 	.ascii	"no kbd\n"

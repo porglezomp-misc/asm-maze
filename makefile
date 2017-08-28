@@ -46,7 +46,8 @@ target/test-fb: obj/fb.o obj/random.o obj/hex.o
 target/test-bmp: obj/random.o obj/bmp.o
 target/absdiff: obj/hex.o
 target/maze-dir: obj/fb.o obj/clock.o obj/kbd.o obj/rect.o \
-	obj/raytrace.o obj/line.o obj/trig.o
+	obj/raytrace.o obj/line.o obj/trig.o obj/random.o \
+	obj/maze.o
 target/mazegen: obj/bmp.o obj/maze.o obj/random.o obj/hex.o
 
 # Library dependencies

@@ -1,8 +1,8 @@
 	.text
 
 # Note, this must be one less than a multiple of 4
-WIDTH = 127
-HEIGHT = 127
+WIDTH = 31
+HEIGHT = 31
 
 	.globl _start
 _start:
