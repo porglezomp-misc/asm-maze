@@ -29,4 +29,8 @@ NESW NESW
 
 This looks like it behaves randomly!
 
+Audio:
 
+Need to enable OSS audio emulation using
+
+$ sudo modprobe snd_pcm_oss
