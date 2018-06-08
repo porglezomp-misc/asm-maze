@@ -4,6 +4,10 @@ Keyboard checking:
 - Use ioctl EVIOCGBIT(0, sizeof(evbit)) to check for EV_KEY
 - If it's set, then use EVIOCGBIT(EV_KEY, sizeof(keybit)) to check if interesting keys are supported
 
+UPDATE: This doesn't work!
+My logitech mouse claims to support a bunch of keyboard keys, so it gets detected.
+Instead, we just open all of the event devices and read from *all* of them.
+
 Random selection:
 
 Assume we're picking a direction, and some are potentially invalid.
